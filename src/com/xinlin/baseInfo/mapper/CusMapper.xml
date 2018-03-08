@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.CusMapper">
+
+	<sql id="queryWhere">
+		FROM CUSTOMER cus left join CUS_LEVEL cul ON cus.CL_CD = cul.CL_CD 
+			
+		WHERE cus.DEL_FLAG <![CDATA[<>]]> 0
+		<if test="CUS_NM != null and CUS_NM != ''" >AND cus.CUS_NM like "%"#{CUS_NM}"%"</if>
+		<if test="CUS_ADDR != null and CUS_ADDR != ''" >AND cus.CUS_ADDR like "%"#{CUS_ADDR}"%"</if>
+		ORDER BY cus.INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的仓库信息  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			cus.ID,cus.CUS_CD,cus.CUS_NM,cus.CL_CD,cul.CL_NM,cus.CUS_ADDR,
+			cus.PROVINCE,cus.CITY,cus.COUNTY,cus.MOBILE,cus.TEL,
+			cus.EMAIL,cus.INPUT_CD,cus.INPUT_NM,cus.INPUT_DT,cus.MODIFY_CD,
+			cus.MODIFY_NM,cus.MODIFY_DT,cus.DEL_FLAG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增仓库信息 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO CUSTOMER
+		 (
+		 	ID
+		 	<if test="CUS_CD !=null and CUS_CD != ''">,CUS_CD</if>
+		 	<if test="CUS_NM !=null and CUS_NM != ''">,CUS_NM</if>
+		 	<if test="CL_CD !=null and CL_CD != ''">,CL_CD</if>
+		 	<if test="CUS_ADDR !=null and CUS_ADDR != ''">,CUS_ADDR</if>
+		 	
+		 	<if test="PROVINCE !=null and PROVINCE != ''">,PROVINCE</if>
+		 	<if test="CITY !=null and CITY != ''">,CITY</if>
+		 	<if test="COUNTY !=null and COUNTY != ''">,COUNTY</if>
+		 	
+		 	<if test="PROVINCE_NM !=null and PROVINCE_NM != ''">,PROVINCE_NM</if>
+		 	<if test="CITY_NM !=null and CITY_NM != ''">,CITY_NM</if>
+		 	<if test="COUNTY_NM !=null and COUNTY_NM != ''">,COUNTY_NM</if>
+		 	
+		 	<if test="MOBILE !=null and MOBILE != ''">,MOBILE</if>
+		 	<if test="TEL !=null and TEL != ''">,TEL</if>
+		 	
+		 	<if test="EMAIL !=null and EMAIL != ''">,EMAIL</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="CUS_CD !=null and CUS_CD != ''">,#{CUS_CD}</if>
+		 	<if test="CUS_NM !=null and CUS_NM != ''">,#{CUS_NM}</if>
+		 	<if test="CL_CD !=null and CL_CD != ''">,#{CL_CD}</if>
+		 	<if test="CUS_ADDR !=null and CUS_ADDR != ''">,#{CUS_ADDR}</if>
+		 	
+		 	<if test="PROVINCE !=null and PROVINCE != ''">,#{PROVINCE}</if>
+		 	<if test="CITY !=null and CITY != ''">,#{CITY}</if>
+		 	<if test="COUNTY !=null and COUNTY != ''">,#{COUNTY}</if>
+		 	
+		 	<if test="PROVINCE_NM !=null and PROVINCE_NM != ''">,#{PROVINCE_NM)</if>
+		 	<if test="CITY_NM !=null and CITY_NM != ''">,#{CITY_NM}</if>
+		 	<if test="COUNTY_NM !=null and COUNTY_NM != ''">,#{COUNTY_NM}</if>
+		 	
+		 	<if test="MOBILE !=null and MOBILE != ''">,#{MOBILE}</if>
+		 	<if test="TEL !=null and TEL != ''">,#{TEL}</if>
+		 	
+		 	<if test="EMAIL !=null and EMAIL != ''">,#{EMAIL}</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(CUS_CD)查询仓库信息 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,CUS_CD,CUS_NM,CL_CD,CUS_ADDR,
+			PROVINCE,CITY,COUNTY,MOBILE,TEL,
+			EMAIL,INPUT_CD,INPUT_NM,INPUT_DT,MODIFY_CD,
+			MODIFY_NM,MODIFY_DT,DEL_FLAG 
+		FROM CUSTOMER WHERE CUS_CD = #{CUS_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(CUS_CD)进行仓库信息修改 -->
+	<update id="update" parameterType="map">
+		UPDATE CUSTOMER set id=id
+		<if test="CUS_CD !=null and CUS_CD != ''">,CUS_CD=#{CUS_CD}</if>
+	 	<if test="CUS_NM !=null and CUS_NM != ''">,CUS_NM=#{CUS_NM}</if>
+	 	<if test="CL_CD !=null and CL_CD != ''">,CL_CD=#{CL_CD}</if>
+	 	<if test="CUS_ADDR !=null and CUS_ADDR != ''">,CUS_ADDR=#{CUS_ADDR}</if>
+	 	
+	 	<if test="PROVINCE !=null and PROVINCE != ''">,PROVINCE=#{PROVINCE}</if>
+	 	<if test="CITY !=null and CITY != ''">,CITY=#{CITY}</if>
+	 	<if test="COUNTY !=null and COUNTY != ''">,COUNTY=#{COUNTY}</if>
+	 	
+	 	<if test="PROVINCE_NM !=null and PROVINCE_NM != ''">,PROVINCE_NM=#{PROVINCE_NM}</if>
+		<if test="CITY_NM !=null and CITY_NM != ''">,CITY_NM=#{CITY_NM}</if>
+		<if test="COUNTY_NM !=null and COUNTY_NM != ''">,COUNTY_NM=#{COUNTY_NM}</if>
+	 	
+	 	<if test="MOBILE !=null and MOBILE != ''">,MOBILE=#{MOBILE}</if>
+	 	<if test="TEL !=null and TEL != ''">,TEL=#{TEL}</if>
+	 	
+	 	<if test="EMAIL !=null and EMAIL != ''">,EMAIL=#{EMAIL}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE CUSTOMER SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+	<!-- 查询客户的键值对在下拉框使用 -->
+	<select id="queryCus" resultType="map">
+		SELECT 
+			CUS_CD id,CUS_NM text
+		FROM CUSTOMER WHERE DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+</mapper>

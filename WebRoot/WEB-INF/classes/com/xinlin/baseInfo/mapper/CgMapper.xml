@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.CgMapper">
+
+	<sql id="queryWhere">
+		FROM category_goods WHERE DEL_FLAG <![CDATA[<>]]> 0
+		<if test="CG_CD != null and CG_CD != ''" >AND CG_CD like '%${CG_CD}%'</if>
+		<if test="CG_NM != null and CG_NM != ''" >AND CG_NM like '%${CG_NM}%'</if>
+		ORDER BY CG_CD DESC
+	</sql>
+	<!-- 分页查找所有的种类管理  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			ID,CG_CD,CG_NM,DEL_FLAG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增种类管理 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO category_goods
+		 (
+		 	ID
+		 	<if test="CG_CD !=null and CG_CD != ''">,CG_CD</if>
+		 	<if test="CG_NM !=null and CG_NM != ''">,CG_NM</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="CG_CD !=null and CG_CD != ''">,#{CG_CD}</if>
+		 	<if test="CG_NM !=null and CG_NM != ''">,#{CG_NM}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(CG_CD)查询种类管理 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,CG_CD,CG_NM,DEL_FLAG 
+		FROM category_goods WHERE CG_CD = #{CG_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 查询种类的键值对集合,在下拉框中使用 -->
+	<select id="queryCg" resultType="map">
+		SELECT 
+			CG_CD id,CG_NM text
+		FROM category_goods WHERE DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(CG_CD)进行种类管理修改 -->
+	<update id="update" parameterType="map">
+		UPDATE category_goods set id=id
+		<if test="CG_CD !=null and CG_CD != ''">,CG_CD=#{CG_CD}</if>
+	 	<if test="CG_NM !=null and CG_NM != ''">,CG_NM=#{CG_NM}</if>
+	 	
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE category_goods SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.xinlin.app.entity.pojo.User" alias="user"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.Role" alias="role"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.SysUser" alias="sysUser"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.Menu" alias="menu"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.Resource" alias="resource"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.Auth" alias="auth"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.RoleUserMap" alias="roleUserMap"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.FileLoad" alias="fileload"/>
+		<typeAlias type="com.xinlin.app.entity.pojo.JcdfLog" alias="jcdflog"/>
+		<!-- 仓库信息 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.WareHouse" alias="wareHouse"/>
+		<!-- 品种 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.Variety" alias="variety"/>
+		<!-- 供应商级别 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.SupLevel" alias="supLevel"/>
+		<!-- 供应商信息 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.Supplier" alias="supplier"/>
+		<!-- 客户信息 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.Customer" alias="customer"/>
+		<!-- 入库信息 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.Storage" alias="storage"/>
+		<!-- 出库信息 -->
+		<typeAlias type="com.xinlin.baseInfo.entity.Library" alias="library"/>
+	</typeAliases>
+	
+	<!-- 分页插件(通过在mybatis底层拦截查询动作，动态解析组装sql语句实现动态分页功能) -->
+	<plugins>
+		<plugin interceptor="com.xinlin.app.util.platform.filter.PageInterceptor"></plugin>
+	</plugins>
+</configuration>

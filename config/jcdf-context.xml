@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"  
+    xsi:schemaLocation="http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<util:properties id="settings" location="classpath:jcdf-default.properties" />  
+
+	<context:property-placeholder
+	location="classpath:jcdf-default.properties,classpath:mybatis/mybatis.properties" />
+
+	<!-- jedisObjectFactory,初始化redis服务连接 -->	
+ 	<bean id="jedisObjectFactory" class="com.xinlin.app.util.platform.jedis.JedisObjectFactory" />
+ 
+
+	<!-- Enable annotation style of managing transactions -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- Declare a datasource that has pooling capabilities -->
+<!-- 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close" p:driverClass="${app.jdbc.driverClassName}"
+		p:jdbcUrl="${app.jdbc.url}" p:user="${app.jdbc.username}" p:password="${app.jdbc.password}"
+		p:acquireIncrement="10" p:idleConnectionTestPeriod="60" p:maxPoolSize="100"
+		p:maxStatements="50" p:minPoolSize="10" /> -->
+		
+	
+	<!-- Declare a datasource poll, that use WebLogic Server Settints -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${jcdf.app.jndiName}</value>
+		</property>
+		<property name="resourceRef">   
+         	<value>true</value>   
+		</property> 
+	</bean>
+	
+
+	<!-- Declare a transaction manager -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="dataSource" />
+		
+ 
+
+	<!-- define the SqlSessionFactory, notice that configLocation is not needed when you use MapperFactoryBean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis/sqlmap-config.xml" />
+    </bean>
+
+    <!-- scan for mappers and let them be autowired -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="${MapperInterfacePackage}" />
+    </bean>
+    
+    
+      <!-- spring aop definition , globally manage the system log records -->
+    <!--  <bean id="jcdfLogMgr" class="com.xinlin.app.util.platform.springlog.JcdfLogMgr"></bean>
+      -->
+     <!--aop-->
+     
+      <aop:config>
+      	<!-- <aop:pointcut expression="execution(* com.xinlin.app.controller.*.*(..))" id="perform"/> -->
+      	<aop:pointcut id="perform" expression="(execution (* com.xinlin.app.controller.*.*(..))) OR (execution (* com.xinlin.app.service.*.*(..)))" /> 
+      	<aop:aspect ref="jcdfLogMgr">
+      		<aop:before method="beginLog" pointcut-ref="perform"/>
+      		<aop:after-returning method="commitLog" pointcut-ref="perform"/>
+      		<aop:after-throwing method="logException"
+				pointcut-ref="perform" throwing="ex" />
+      	</aop:aspect>
+      </aop:config>
+   
+    
+     <!-- declare Redis Cache Manager 
+    <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager" c:template-ref="redisTemplate"/>
+    -->
+    
+    
+  <!--   <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:host-name="${redis.host}" p:port="${redis.port}" p:password="${redis.pass}"/>
+   -->
+ 
+	<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:host-name="${redis.machine.ip}" p:port="${redis.machine.port}" p:password=""/>
+		
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate" 
+		p:connection-factory-ref="connectionFactory"/>
+		
+		
+ 	<!-- jedis连接池的配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxActive" value="${redis.machine.maxActive}" />
+		<property name="maxIdle" value="${redis.machine.maxIdle}" />
+		<property name="maxWait" value="${redis.machine.maxWait}" />
+		<property name="testOnBorrow" value="${redis.machine.testOnBorrow}" />
+	</bean>
+
+	<bean id="jedis.shardInfo" class="redis.clients.jedis.JedisShardInfo">
+		<constructor-arg index="0" value="${redis.machine.ip}" />
+		<constructor-arg index="1" value="${redis.machine.port}" type="int" />
+	</bean>
+
+	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1">
+			<list>
+				<ref bean="jedis.shardInfo" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 配置redis连接池,Chenxl -->
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.machine.ip}" />
+		<constructor-arg index="2" value="${redis.machine.port}" type="int" />
+	</bean>
+    
+</beans>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.SlMapper">
+
+	<sql id="queryWhere">
+		FROM SUP_LEVEL sl LEFT JOIN VARIETY v on SL.VAR_CD = V.VAR_CD 
+		
+		WHERE sl.DEL_FLAG <![CDATA[<>]]> 0
+		<if test="SL_NM != null and SL_NM != ''" >AND sl.SL_NM like "%"#{SL_NM}"%"</if>
+		<if test="VAR_CD != null and VAR_CD != ''" >AND sl.VAR_CD = #{VAR_CD}</if>
+		
+		ORDER BY sl.INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的供应商级别  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			sl.ID,sl.SL_CD,sl.SL_NM,sl.VAR_CD,v.VAR_NM,sl.PRC,sl.UNIT_CD,sl.DISCOUNT_RATE,sl.ADJUST_LIMIT,sl.FINAL_PRC,sl.INPUT_CD,
+			sl.INPUT_NM,sl.INPUT_DT,sl.MODIFY_CD,sl.MODIFY_NM,sl.MODIFY_DT,sl.DEL_FLAG
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增供应商级别 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO SUP_LEVEL
+		 (
+		 	ID
+		 	<if test="SL_CD !=null and SL_CD != ''">,SL_CD</if>
+		 	<if test="SL_NM !=null and SL_NM != ''">,SL_NM</if>
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD</if>
+		 	<if test="PRC !=null and PRC != ''">,PRC</if>
+		 	<if test="UNIT_CD !=null and UNIT_CD != ''">,UNIT_CD</if>
+		 	<if test="DISCOUNT_RATE !=null and DISCOUNT_RATE != ''">,DISCOUNT_RATE</if>
+		 	<if test="ADJUST_LIMIT !=null and ADJUST_LIMIT != ''">,ADJUST_LIMIT</if>
+		 	<if test="FINAL_PRC !=null and FINAL_PRC != ''">,FINAL_PRC</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="SL_CD !=null and SL_CD != ''">,#{SL_CD}</if>
+		 	<if test="SL_NM !=null and SL_NM != ''">,#{SL_NM}</if>
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,#{VAR_CD}</if>
+		 	<if test="PRC !=null and PRC != ''">,#{PRC}</if>
+		 	<if test="UNIT_CD !=null and UNIT_CD != ''">,#{UNIT_CD}</if>
+		 	<if test="DISCOUNT_RATE !=null and DISCOUNT_RATE != ''">,#{DISCOUNT_RATE}</if>
+		 	<if test="ADJUST_LIMIT !=null and ADJUST_LIMIT != ''">,#{ADJUST_LIMIT}</if>
+		 	<if test="FINAL_PRC !=null and FINAL_PRC != ''">,#{FINAL_PRC}</if>
+		 	
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(SL_CD)查询供应商级别 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,SL_CD,SL_NM,VAR_CD,PRC,UNIT_CD,DISCOUNT_RATE,ADJUST_LIMIT,FINAL_PRC,INPUT_CD,
+			INPUT_NM,INPUT_DT,MODIFY_CD,MODIFY_NM,MODIFY_DT,DEL_FLAG
+		FROM SUP_LEVEL WHERE SL_CD = #{SL_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 查询供应商级别,下拉框用 -->
+	<select id="querySl" resultType="map">
+		SELECT 
+			SL_CD id,SL_NM text,VAR_CD
+		FROM SUP_LEVEL WHERE DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(SL_CD)进行供应商级别修改 -->
+	<update id="update" parameterType="map">
+		UPDATE SUP_LEVEL set id=id
+		<if test="SL_CD !=null and SL_CD != ''">,SL_CD=#{SL_CD}</if>
+	 	<if test="SL_NM !=null and SL_NM != ''">,SL_NM=#{SL_NM}</if>
+	 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD=#{VAR_CD}</if>
+	 	<if test="PRC !=null and PRC != ''">,PRC=#{PRC}</if>
+	 	<if test="UNIT_CD !=null and UNIT_CD != ''">,UNIT_CD=#{UNIT_CD}</if>
+	 	<if test="DISCOUNT_RATE !=null and DISCOUNT_RATE != ''">,DISCOUNT_RATE=#{DISCOUNT_RATE}</if>
+	 	<if test="ADJUST_LIMIT !=null and ADJUST_LIMIT != ''">,ADJUST_LIMIT=#{ADJUST_LIMIT}</if>
+	 	<if test="FINAL_PRC !=null and FINAL_PRC != ''">,FINAL_PRC=#{FINAL_PRC}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+	 	
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE SUP_LEVEL SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+</mapper>

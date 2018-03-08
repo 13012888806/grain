@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.LibMapper">
+
+	<sql id="queryWhere">
+		FROM LIBRARY WHERE DEL_FLAG <![CDATA[<>]]> 0
+		<if test="VAR_CD != null and VAR_CD != ''" >AND VAR_CD like '%${VAR_CD}%'</if>
+		ORDER BY INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的出库信息  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			ID,WS_CD,VAR_CD,OUT_CNT,CNT_UNIT,
+			WGT,WGT_UNIT,TOTAL_WGT,CUS_CD,OUT_NM,
+			OUT_DT,INPUT_CD,INPUT_NM,INPUT_DT,MODIFY_CD,
+			MODIFY_NM,MODIFY_DT,DEL_FLAG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增出库信息 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO LIBRARY
+		 (
+		 	ID
+		 	<if test="WS_CD !=null and WS_CD != ''">,WS_CD</if>
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD</if>
+		 	<if test="OUT_CNT !=null and OUT_CNT != ''">,OUT_CNT</if>
+		 	<if test="CNT_UNIT !=null and CNT_UNIT != ''">,CNT_UNIT</if>
+		 	<if test="WGT !=null and WGT != ''">,WGT</if>
+		 	<if test="WGT_UNIT !=null and WGT_UNIT != ''">,WGT_UNIT</if>
+		 	<if test="TOTAL_WGT !=null and TOTAL_WGT != ''">,TOTAL_WGT</if>
+		 	<if test="CUS_CD !=null and CUS_CD != ''">,CUS_CD</if>
+		 	<if test="OUT_NM !=null and OUT_NM != ''">,OUT_NM</if>
+		 	<if test="OUT_DT !=null and OUT_DT != ''">,OUT_DT</if>
+		 	
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="WS_CD !=null and WS_CD != ''">,#{WS_CD}</if>
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,#{VAR_CD}</if>
+		 	<if test="OUT_CNT !=null and OUT_CNT != ''">,#{OUT_CNT}</if>
+		 	<if test="CNT_UNIT !=null and CNT_UNIT != ''">,#{CNT_UNIT}</if>
+		 	
+		 	<if test="WGT !=null and WGT != ''">,#{WGT}</if>
+		 	<if test="WGT_UNIT !=null and WGT_UNIT != ''">,#{WGT_UNIT}</if>
+		 	<if test="TOTAL_WGT !=null and TOTAL_WGT != ''">,#{TOTAL_WGT}</if>
+		 	<if test="CUS_CD !=null and CUS_CD != ''">,#{CUS_CD}</if>
+		 	<if test="OUT_NM !=null and OUT_NM != ''">,#{OUT_NM}</if>
+		 	
+		 	<if test="OUT_DT !=null and OUT_DT != ''">,#{OUT_DT}</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(WS_CD)查询出库信息 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,WS_CD,VAR_CD,OUT_CNT,CNT_UNIT,
+			WGT,WGT_UNIT,TOTAL_WGT,CUS_CD,OUT_NM,
+			OUT_DT,INPUT_CD,INPUT_NM,INPUT_DT,MODIFY_CD,
+			MODIFY_NM,MODIFY_DT,DEL_FLAG 
+		FROM LIBRARY WHERE WS_CD = #{WS_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(WS_CD)进行出库信息修改 -->
+	<update id="update" parameterType="map">
+		UPDATE LIBRARY set id=id
+		<if test="WS_CD !=null and WS_CD != ''">,WS_CD=#{WS_CD}</if>
+	 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD=#{VAR_CD}</if>
+	 	<if test="OUT_CNT !=null and OUT_CNT != ''">,OUT_CNT=#{OUT_CNT}</if>
+	 	<if test="CNT_UNIT !=null and CNT_UNIT != ''">,CNT_UNIT=#{CNT_UNIT}</if>
+	 	
+	 	<if test="WGT !=null and WGT != ''">,WGT=#{WGT}</if>
+	 	<if test="WGT_UNIT !=null and WGT_UNIT != ''">,WGT_UNIT=#{WGT_UNIT}</if>
+	 	<if test="TOTAL_WGT !=null and TOTAL_WGT != ''">,TOTAL_WGT=#{TOTAL_WGT}</if>
+	 	<if test="CUS_CD !=null and CUS_CD != ''">,CUS_CD=#{CUS_CD}</if>
+	 	<if test="OUT_NM !=null and OUT_NM != ''">,OUT_NM=#{OUT_NM}</if>
+	 	
+	 	<if test="OUT_DT !=null and OUT_DT != ''">,OUT_DT=#{OUT_DT}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE LIBRARY SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+</mapper>

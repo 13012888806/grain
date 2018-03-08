@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.SupMapper">
+
+	<sql id="queryWhere">
+		FROM SUPPLIER s left join SUP_LEVEL sl on s.SL_CD = sl.SL_CD
+		
+		WHERE s.DEL_FLAG <![CDATA[<>]]> 0
+		<if test="SUP_NM != null and SUP_NM != ''" >AND s.SUP_NM like "%"#{SUP_NM}"%"</if>
+		<if test="SL_CD != null and SL_CD != ''" >AND s.SL_CD = #{SL_CD}</if>
+		ORDER BY s.INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的供应商信息  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			s.ID,s.SUP_CD,s.SUP_NM,s.SL_CD,sl.SL_NM,s.SUP_ADDR,
+			s.PROVINCE,s.CITY,s.COUNTY,s.MOBILE,s.TEL,
+			s.EMAIL,s.INPUT_CD,s.INPUT_NM,s.INPUT_DT,s.MODIFY_CD,
+			s.MODIFY_NM,s.MODIFY_DT,s.DEL_FLAG
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增供应商信息 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO SUPPLIER
+		 (
+		 	ID
+		 	<if test="SUP_CD !=null and SUP_CD != ''">,SUP_CD</if>
+		 	<if test="SUP_NM !=null and SUP_NM != ''">,SUP_NM</if>
+		 	<if test="SL_CD !=null and SL_CD != ''">,SL_CD</if>
+		 	<if test="SUP_ADDR !=null and SUP_ADDR != ''">,SUP_ADDR</if>
+		 	
+		 	<if test="PROVINCE !=null and PROVINCE != ''">,PROVINCE</if>
+		 	<if test="CITY !=null and CITY != ''">,CITY</if>
+		 	<if test="COUNTY !=null and COUNTY != ''">,COUNTY</if>
+		 	<if test="MOBILE !=null and MOBILE != ''">,MOBILE</if>
+		 	<if test="TEL !=null and TEL != ''">,TEL</if>
+		 	
+		 	<if test="EMAIL !=null and EMAIL != ''">,EMAIL</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="SUP_CD !=null and SUP_CD != ''">,#{SUP_CD}</if>
+		 	<if test="SUP_NM !=null and SUP_NM != ''">,#{SUP_NM}</if>
+		 	<if test="SL_CD !=null and SL_CD != ''">,#{SL_CD}</if>
+		 	<if test="SUP_ADDR !=null and SUP_ADDR != ''">,#{SUP_ADDR}</if>
+		 	
+		 	<if test="PROVINCE !=null and PROVINCE != ''">,#{PROVINCE}</if>
+		 	<if test="CITY !=null and CITY != ''">,#{CITY}</if>
+		 	<if test="COUNTY !=null and COUNTY != ''">,#{COUNTY}</if>
+		 	<if test="MOBILE !=null and MOBILE != ''">,#{MOBILE}</if>
+		 	<if test="TEL !=null and TEL != ''">,#{TEL}</if>
+		 	
+		 	<if test="EMAIL !=null and EMAIL != ''">,#{EMAIL}</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(SUP_CD)查询供应商信息 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,SUP_CD,SUP_NM,SL_CD,SUP_ADDR,
+			PROVINCE,CITY,COUNTY,MOBILE,TEL,
+			EMAIL,INPUT_CD,INPUT_NM,INPUT_DT,MODIFY_CD,
+			MODIFY_NM,MODIFY_DT,DEL_FLAG
+		FROM SUPPLIER WHERE SUP_CD = #{SUP_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(SUP_CD)进行供应商信息修改 -->
+	<update id="update" parameterType="map">
+		UPDATE SUPPLIER set id=id
+		<if test="SUP_CD !=null and SUP_CD != ''">,SUP_CD=#{SUP_CD}</if>
+	 	<if test="SUP_NM !=null and SUP_NM != ''">,SUP_NM=#{SUP_NM}</if>
+	 	<if test="SL_CD !=null and SL_CD != ''">,SL_CD=#{SL_CD}</if>
+	 	<if test="SUP_ADDR !=null and SUP_ADDR != ''">,SUP_ADDR=#{SUP_ADDR}</if>
+	 	
+	 	<if test="PROVINCE !=null and PROVINCE != ''">,PROVINCE=#{PROVINCE}</if>
+	 	<if test="CITY !=null and CITY != ''">,CITY=#{CITY}</if>
+	 	<if test="COUNTY !=null and COUNTY != ''">,COUNTY=#{COUNTY}</if>
+	 	<if test="MOBILE !=null and MOBILE != ''">,MOBILE=#{MOBILE}</if>
+	 	<if test="TEL !=null and TEL != ''">,TEL=#{TEL}</if>
+	 	
+	 	<if test="EMAIL !=null and EMAIL != ''">,EMAIL=#{EMAIL}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE SUPPLIER SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.app.mapper.SysUserMapper">
+	<!-- 实体与数据库表字段映射 -->
+	<resultMap id="sysUser" type="sysUser">
+		<id column="user_id" property="userId"   />
+		<result column="user_name" property="userName" />
+		<result column="user_pass" property="userPass" />
+		<result column="create_time" property="createTime" />
+		<result column="user_type" property="userType" />
+	</resultMap>
+
+	<!-- 分页查找所有的用户信息  -->
+	<select id="pageQuery" resultMap="sysUser" parameterType="sysUser">
+		SELECT user_id,user_name,user_type FROM jcdf_user where 1=1
+			<if test="userId != null and userId != ''" >and user_id like '%${userId}%'</if>
+			<if test="userName != null and userName != ''">and user_name like '%${userName}%'</if>
+		order by create_time desc
+	</select>
+	
+	<!-- 新增用户 -->
+	<insert id="insert" parameterType="sysUser">
+		 insert into jcdf_user(user_id,user_name,user_pass,create_time,user_type) values(#{userId},#{userName},#{userPass},#{createTime},#{userType})
+	</insert>
+	
+	<!-- 查询所有的用户信息 -->
+	<select id="list" resultMap="sysUser">
+		 SELECT user_id,user_name FROM jcdf_user order by create_time desc
+	</select>
+	
+	<!-- 通过用户账号(userId)查询用户信息 -->
+	<select id="get" parameterType="String" resultMap="sysUser">
+	      select user_id,user_name,user_pass,user_type FROM jcdf_user where user_id = #{userId}
+	</select>
+	
+	<!-- 根据用户账号(userId)进行用户信息修改 -->
+	<update id="update" parameterType="sysUser">
+		UPDATE jcdf_user
+		<set>
+			<if test="userName != null ">user_name = #{userName},</if>
+			<if test="userPass != null ">user_pass = #{userPass}</if>
+		</set>
+		WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 根据用户账号(userId)删除用户 -->
+	<delete id="deleteById" parameterType="string">
+		DELETE FROM jcdf_user WHERE user_id = #{userId}
+	</delete>
+	
+	<!-- 根据用户账号(userId)获取用户所有有权限的资源编码 -->
+	<select id="queryUserMenuCode" resultType="string" parameterType="string">
+		SELECT menu_code FROM jcdf_auth WHERE auth_type=2 AND user_role_id=#{userId} UNION ALL   
+		SELECT menu_code FROM jcdf_auth a LEFT OUTER JOIN jcdf_role_user_map b ON a.user_role_id = b.role_id
+		WHERE a.auth_type =1 AND b.user_id =#{userId}
+	</select>
+	 
+	
+	<!-- 数据导出  -->
+	<select id="export" resultType="hashmap" parameterType="map">
+		SELECT user_id,user_name FROM jcdf_user where 1=1
+			<if test="userId != null and userId != ''" >and user_id like '%${userId}%'</if>
+			<if test="userName != null and userName != ''">and user_name like '%${userName}%'</if>
+		order by create_time desc
+	</select>
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.StoMapper">
+
+	<sql id="queryWhere">
+		FROM STORAGE STOE 
+			LEFT JOIN CUSTOMER CUSR ON STOE.CUS_CD = CUSR.CUS_CD
+			LEFT JOIN VARIETY VARY ON STOE.VAR_CD = VARY.VAR_CD 
+			LEFT JOIN WAREHOUSE WARE ON STOE.WS_CD = WARE.WS_CD
+		WHERE STOE.DEL_FLAG <![CDATA[<>]]> 0
+		<if test="WS_NM != null and WS_NM != ''" >AND WARE.WS_NM like '%${WS_NM}%'</if>
+		ORDER BY STOE.INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的入库信息  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			STOE.ID,
+			STOE.CUS_CD,CUSR.CUS_NM,
+			STOE.WS_CD,WARE.WS_NM,
+			STOE.VAR_CD,VARY.VAR_NM,
+			STOE.CNT,
+			STOE.CNT_UNIT,STOE.WGT,STOE.TOTAL_WGT,STOE.WGT_UNIT,STOE.SUP_CD,
+			STOE.STORAGE_TPY,STOE.RMK,STOE.INPUT_CD,STOE.INPUT_NM,STOE.INPUT_DT,
+			STOE.MODIFY_CD,STOE.MODIFY_NM,STOE.MODIFY_DT,STOE.DEL_FLAG,STOE.IN_NM,
+			STOE.IN_DT
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增入库信息 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO STORAGE
+		 (
+		 	ID
+		 	<if test="CUS_CD !=null and CUS_CD != ''">,CUS_CD</if>
+		 	<if test="WS_CD !=null and WS_CD != ''">,WS_CD</if>
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD</if>
+		 	<if test="CNT !=null and CNT != ''">,CNT</if>
+		 	
+		 	<if test="CNT_UNIT !=null and CNT_UNIT != ''">,CNT_UNIT</if>
+		 	<if test="WGT !=null and WGT != ''">,WGT</if>
+		 	<if test="TOTAL_WGT !=null and TOTAL_WGT != ''">,TOTAL_WGT</if>
+		 	<if test="WGT_UNIT !=null and WGT_UNIT != ''">,WGT_UNIT</if>
+		 	<if test="SUP_CD !=null and SUP_CD != ''">,SUP_CD</if>
+		 	
+		 	<if test="STORAGE_TPY !=null and STORAGE_TPY != ''">,STORAGE_TPY</if>
+		 	<if test="RMK !=null and RMK != ''">,RMK</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 	<if test="IN_NM !=null and IN_NM != ''">,IN_NM</if>
+		 	<if test="IN_DT !=null and IN_DT != ''">,IN_DT</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="CUS_CD !=null and CUS_CD != ''">,#{CUS_CD}</if>
+		 	<if test="WS_CD !=null and WS_CD != ''">,#{WS_CD}</if>
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,#{VAR_CD}</if>
+		 	<if test="CNT !=null and CNT != ''">,#{CNT}</if>
+		 	
+		 	<if test="CNT_UNIT !=null and CNT_UNIT != ''">,#{CNT_UNIT}</if>
+		 	<if test="WGT !=null and WGT != ''">,#{WGT}</if>
+		 	<if test="TOTAL_WGT !=null and TOTAL_WGT != ''">,#{TOTAL_WGT}</if>
+		 	<if test="WGT_UNIT !=null and WGT_UNIT != ''">,#{WGT_UNIT}</if>
+		 	<if test="SUP_CD !=null and SUP_CD != ''">,#{SUP_CD}</if>
+		 	
+		 	<if test="STORAGE_TPY !=null and STORAGE_TPY != ''">,#{STORAGE_TPY}</if>
+		 	<if test="RMK !=null and RMK != ''">,#{RMK}</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 	<if test="IN_NM !=null and IN_NM != ''">,#{IN_NM}</if>
+		 	<if test="IN_DT !=null and IN_DT != ''">,#{IN_DT}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(WS_CD)查询入库信息 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,CUS_CD,WS_CD,VAR_CD,CNT,
+			CNT_UNIT,WGT,TOTAL_WGT,WGT_UNIT,SUP_CD,
+			STORAGE_TPY,RMK,INPUT_CD,INPUT_NM,INPUT_DT,
+			MODIFY_CD,MODIFY_NM,MODIFY_DT,DEL_FLAG,IN_NM,IN_DT 
+		FROM STORAGE WHERE WS_CD = #{WS_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(WS_CD)进行入库信息修改 -->
+	<update id="update" parameterType="map">
+		UPDATE STORAGE set id=id
+		<if test="WS_CD !=null and WS_CD != ''">,WS_CD=#{WS_CD}</if>
+	 	<if test="CUS_CD !=null and CUS_CD != ''">,CUS_CD=#{CUS_CD}</if>
+	 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD=#{VAR_CD}</if>
+	 	<if test="CNT !=null and CNT != ''">,CNT=#{CNT}</if>
+	 	
+	 	<if test="CNT_UNIT !=null and CNT_UNIT != ''">,CNT_UNIT=#{CNT_UNIT}</if>
+	 	<if test="WGT !=null and WGT != ''">,WGT=#{WGT}</if>
+	 	<if test="TOTAL_WGT !=null and TOTAL_WGT != ''">,TOTAL_WGT=#{TOTAL_WGT}</if>
+	 	<if test="WGT_UNIT !=null and WGT_UNIT != ''">,WGT_UNIT=#{WGT_UNIT}</if>
+	 	<if test="SUP_CD !=null and SUP_CD != ''">,SUP_CD=#{SUP_CD}</if>
+	 	
+	 	<if test="STORAGE_TPY !=null and STORAGE_TPY != ''">,STORAGE_TPY=#{STORAGE_TPY}</if>
+	 	<if test="RMK !=null and RMK != ''">,RMK=#{RMK}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+	 	<if test="IN_NM !=null and IN_NM != ''">,IN_NM=#{IN_NM}</if>
+	 	<if test="IN_DT !=null and IN_DT != ''">,IN_DT=#{IN_DT}</if>
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE STORAGE SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+</mapper>

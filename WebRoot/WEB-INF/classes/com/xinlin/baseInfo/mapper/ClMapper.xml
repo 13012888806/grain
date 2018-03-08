@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.ClMapper">
+
+	<sql id="queryWhere">
+		FROM CUS_LEVEL WHERE DEL_FLAG <![CDATA[<>]]> 0
+		<if test="CL_NM != null and CL_NM != ''" >AND CL_NM like "%"#{CL_NM}"%"</if>
+		<if test="VAR_CD != null and VAR_CD != ''" >AND VAR_CD = #{VAR_CD}</if>
+		ORDER BY INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的客户级别  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			ID,VAR_CD,CL_CD,CL_NM,PRC,
+			UNIT_CD,ADJUST_LIMIT,DISCOUNT_RATE,FINAL_PRC,INPUT_CD,
+			INPUT_NM,INPUT_DT,MODIFY_CD,MODIFY_NM,MODIFY_DT,
+			DEL_FLAG
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增客户级别 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO CUS_LEVEL
+		 (
+		 	ID
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD</if>
+		 	<if test="CL_CD !=null and CL_CD != ''">,CL_CD</if>
+		 	<if test="CL_NM !=null and CL_NM != ''">,CL_NM</if>
+		 	<if test="PRC !=null and PRC != ''">,PRC</if>
+		 	
+		 	<if test="UNIT_CD !=null and UNIT_CD != ''">,UNIT_CD</if>
+		 	<if test="ADJUST_LIMIT !=null and ADJUST_LIMIT != ''">,ADJUST_LIMIT</if>
+		 	<if test="DISCOUNT_RATE !=null and DISCOUNT_RATE != ''">,DISCOUNT_RATE</if>
+		 	<if test="FINAL_PRC !=null and FINAL_PRC != ''">,FINAL_PRC</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="VAR_CD !=null and VAR_CD != ''">,#{VAR_CD}</if>
+		 	<if test="CL_CD !=null and CL_CD != ''">,#{CL_CD}</if>
+		 	<if test="CL_NM !=null and CL_NM != ''">,#{CL_NM}</if>
+		 	<if test="PRC !=null and PRC != ''">,#{PRC}</if>
+		 	
+		 	<if test="UNIT_CD !=null and UNIT_CD != ''">,#{UNIT_CD}</if>
+		 	<if test="ADJUST_LIMIT !=null and ADJUST_LIMIT != ''">,#{ADJUST_LIMIT}</if>
+		 	<if test="DISCOUNT_RATE !=null and DISCOUNT_RATE != ''">,#{DISCOUNT_RATE}</if>
+		 	<if test="FINAL_PRC !=null and FINAL_PRC != ''">,#{FINAL_PRC}</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(VAR_CD)查询客户级别 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,VAR_CD,CL_CD,CL_NM,PRC,
+			UNIT_CD,ADJUST_LIMIT,DISCOUNT_RATE,FINAL_PRC,INPUT_CD,
+			INPUT_NM,INPUT_DT,MODIFY_CD,MODIFY_NM,MODIFY_DT,
+			DEL_FLAG 
+		FROM CUS_LEVEL WHERE VAR_CD = #{VAR_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 查询客户级别，下拉框 -->
+	<select id="queryCl" resultType="map">
+		SELECT 
+			CL_CD id,CL_NM text
+		FROM CUS_LEVEL WHERE DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(VAR_CD)进行客户级别修改 -->
+	<update id="update" parameterType="map">
+		UPDATE CUS_LEVEL set id=id
+		<if test="VAR_CD !=null and VAR_CD != ''">,VAR_CD=#{VAR_CD}</if>
+	 	<if test="CL_CD !=null and CL_CD != ''">,CL_CD=#{CL_CD}</if>
+	 	<if test="CL_NM !=null and CL_NM != ''">,CL_NM=#{CL_NM}</if>
+	 	<if test="PRC !=null and PRC != ''">,PRC=#{PRC}</if>
+	 	
+	 	<if test="UNIT_CD !=null and UNIT_CD != ''">,UNIT_CD=#{UNIT_CD}</if>
+	 	<if test="ADJUST_LIMIT !=null and ADJUST_LIMIT != ''">,ADJUST_LIMIT=#{ADJUST_LIMIT}</if>
+	 	<if test="DISCOUNT_RATE !=null and DISCOUNT_RATE != ''">,DISCOUNT_RATE=#{DISCOUNT_RATE}</if>
+	 	<if test="FINAL_PRC !=null and FINAL_PRC != ''">,FINAL_PRC=#{FINAL_PRC}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+	 	
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE CUS_LEVEL SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+</mapper>

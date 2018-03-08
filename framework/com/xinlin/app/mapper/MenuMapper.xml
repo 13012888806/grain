@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.app.mapper.MenuMapper">
+
+	<!-- 功能菜单信息实体与数据库表字段映射 -->
+	<resultMap id="menu" type="menu">
+		<id column="menu_code" property="menuCode" />
+		<id column="parent_menu_code" property="parentMenuCode" />
+		<result column="menu_name" property="menuName" />
+		<result column="menu_type" property="menuType" />
+		<result column="menu_mark" property="menuMark" />
+	</resultMap>
+	<!-- 用户角色权限信息实体与数据库表字段映射 -->
+	<resultMap id="auth" type="auth" >
+		<result column="user_role_id" property="userRoleId" />
+		<result column="auth_type" property="authType" />
+		<result column="menu_code" property="menuCode" />
+	</resultMap>
+	
+	<!-- 分页查询菜单下面的按钮资源数据  -->
+	<select id="pageQuery" parameterType="menu" resultMap="menu">
+		select menu_code,parent_menu_code,menu_name,menu_mark FROM jcdf_menu where 1=1 
+			<if test="menuCode != null and menuCode != ''"> and menu_code = #{menuCode}</if>
+			<if test="parentMenuCode != null and parentMenuCode !=''"> and parent_menu_code = #{parentMenuCode}</if>
+			<!-- 没有指定父节点，则不分页查询资源数据 -->
+			<if test="parentMenuCode == null or parentMenuCode ==''"> and 1 != 1</if>
+			<if test="menuName != null and menuName != ''"> and menu_name = #{menuName}</if>
+			<if test="menuType != null "> and menu_type = #{menuType}</if>
+		order by create_time desc
+	</select>
+	
+	<!-- 根据父节点编码，查询所有的功能菜单信息(不包含按钮) -->
+	<select id="findMenuByParentMenuCode" parameterType="string" resultMap="menu">
+		 select menu_code,parent_menu_code,menu_name,menu_mark FROM jcdf_menu where menu_type=1
+		 	 <if test="value != null "> and parent_menu_code = #{parentMenuCode}</if>
+		 	 <if test="value == null "> and (parent_menu_code = '' or parent_menu_code = ' ' or parent_menu_code is null)</if>
+		 order by create_time desc
+	</select>
+	
+	<!-- 根据父节点编码，查询所有的功能按钮信息(不包含菜单) -->
+	<select id="findButtonByParentMenuCode" parameterType="string" resultMap="menu">
+		 select menu_code,parent_menu_code,menu_name,menu_mark FROM jcdf_menu where menu_type=2
+		 	 <if test="value != null "> and parent_menu_code = #{parentMenuCode}</if>
+		 	 <if test="value == null "> and (parent_menu_code = '' or parent_menu_code = ' ' or parent_menu_code is null)</if>
+		 order by create_time desc
+	</select>
+	
+	<!-- 根据父节点编码，查询所有的功能菜单信息(包含菜单和按钮) -->
+	<select id="findAllByParentMenuCode" parameterType="string" resultMap="menu">
+		 select menu_code,parent_menu_code,menu_name,menu_mark FROM jcdf_menu
+			 <where>
+			 	<if test="value != null ">parent_menu_code = #{parentMenuCode}</if>
+			 	<if test="value == null ">(parent_menu_code = '' or parent_menu_code = ' ' or parent_menu_code is null)</if>
+			 </where>
+		 order by create_time desc
+	</select>
+	
+	<!-- 查询所有的菜单和编码信息(用于内存计算产生树) -->
+	<select id="findAllMenuAndButtonCode" parameterType="string" resultMap="menu">
+		 <!-- 查询所有菜单和按钮资源 -->
+		 <if test="value == 0 ">select menu_code,parent_menu_code,menu_name FROM jcdf_menu</if>
+		 <!-- 根据指定的menu_type加载菜单或者按钮资源 -->
+		 <if test="value != 0 ">select menu_code,parent_menu_code,menu_name FROM jcdf_menu where menu_type=#{value}</if>
+		 order by parent_menu_code asc,create_time desc
+	</select>
+	
+	<!-- 新增功能菜单 -->
+	<insert id="insert" parameterType="menu">
+		 insert into jcdf_menu(menu_code,parent_menu_code,menu_name,menu_type,menu_mark,create_time) 
+		 values(#{menuCode},#{parentMenuCode},#{menuName},#{menuType},#{menuMark},#{createTime})
+	</insert>
+	
+	<!-- 通过功能菜单编号(menuCode)查询功能菜单信息 -->
+	<select id="get" parameterType="String" resultMap="menu">
+	      select menu_code,parent_menu_code,menu_name,menu_mark,menu_type FROM jcdf_menu where menu_code = #{menuCode}
+	</select>
+	
+	<!-- 根据功能菜单编号(menuCode)进行功能菜单信息修改 -->
+	<update id="update" parameterType="menu">
+		UPDATE jcdf_menu
+			<set>
+				<if test="menuCode != null ">menu_code = #{menuCode},</if>
+				<if test="parentMenuCode != null ">parent_menu_code = #{parentMenuCode},</if>
+				<if test="menuName != null ">menu_name = #{menuName},</if>
+				<if test="menuType != null ">menu_type = #{menuType},</if>
+				<if test="menuMark != null ">menu_mark = #{menuMark}</if>
+			</set>
+		WHERE menu_code = #{menuCode}
+	</update>
+	
+	<!-- 根据功能菜单编号(menuCode)删除功能菜单，及其直接子菜单 -->
+	<delete id="deleteById" parameterType="string">
+		DELETE FROM jcdf_menu WHERE menu_code = #{menuCode} or parent_menu_code = #{menuCode}
+	</delete>
+	
+	<!-- 新增用户或者角色权限信息 -->
+	<insert id="insertUserOrRoleAuth" parameterType="auth">
+		 insert into jcdf_auth(user_role_id,auth_type,menu_code) values(#{userRoleId},#{authType},#{menuCode})
+	</insert>
+	
+	<!-- 根据指定的条件查询用户或者角色的权限信息(仅查询直接赋予角色或者用户的权限) -->
+	<select id="getUserOrRoleAuth" parameterType="auth" resultType="string">
+	      select menu_code FROM jcdf_auth where 1=1
+	      	<if test="userRoleId != null "> and user_role_id = #{userRoleId}</if>
+			<if test="authType != null "> and auth_type = #{authType}</if>
+			<if test="menuCode != null "> and menu_code = #{menuCode}</if>
+	</select>
+	
+	<!-- 根据指定的条件删除用户或者角色的权限信息(也被用于删除资源时，清空所有用户角色对改资源的所有权，此时请只传menuCode) -->
+	<delete id="deleteUserOrRoleAuthByAuth" parameterType="auth">
+		DELETE FROM jcdf_auth WHERE 1=1
+			<if test="userRoleId != null "> and user_role_id = #{userRoleId}</if>
+			<if test="authType != null "> and auth_type = #{authType}</if>
+			<if test="menuCode != null "> and menu_code = #{menuCode}</if>
+	</delete>
+</mapper>

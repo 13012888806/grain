@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.baseInfo.mapper.WhMapper">
+
+	<sql id="queryWhere">
+		FROM WAREHOUSE WHERE DEL_FLAG <![CDATA[<>]]> 0
+		<if test="WS_NM != null and WS_NM != ''" >AND WS_NM like '%${WS_NM}%'</if>
+		ORDER BY INPUT_DT DESC
+	</sql>
+	<!-- 分页查找所有的仓库信息  -->
+	<select id="pageQuery" resultType="map">
+		SELECT 
+			ID,WS_CD,WS_NM,WS_ADDR,LENGTH,WIDTH,HEIGHT,WS_TYP,WS_PRC,PAY_TYP,
+			PROVINCE,CITY,COUNTY,INPUT_DT,INPUT_CD,INPUT_NM,MODIFY_DT,MODIFY_CD,MODIFY_NM,DEL_FLAG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<!-- 新增仓库信息 -->
+	<insert id="insert" parameterType="map">
+		 INSERT INTO WAREHOUSE
+		 (
+		 	ID
+		 	<if test="WS_CD !=null and WS_CD != ''">,WS_CD</if>
+		 	<if test="WS_NM !=null and WS_NM != ''">,WS_NM</if>
+		 	<if test="WS_ADDR !=null and WS_ADDR != ''">,WS_ADDR</if>
+		 	<if test="LENGTH !=null and LENGTH != ''">,LENGTH</if>
+		 	<if test="WIDTH !=null and WIDTH != ''">,WIDTH</if>
+		 	<if test="HEIGHT !=null and HEIGHT != ''">,HEIGHT</if>
+		 	<if test="WS_TYP !=null and WS_TYP != ''">,WS_TYP</if>
+		 	<if test="WS_PRC !=null and WS_PRC != ''">,WS_PRC</if>
+		 	<if test="PAY_TYP !=null and PAY_TYP != ''">,PAY_TYP</if>
+		 	
+		 	<if test="PROVINCE !=null and PROVINCE != ''">,PROVINCE</if>
+		 	<if test="CITY !=null and CITY != ''">,CITY</if>
+		 	<if test="COUNTY !=null and COUNTY != ''">,COUNTY</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,INPUT_DT</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,INPUT_CD</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,INPUT_NM</if>
+		 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT</if>
+		 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD</if>
+		 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,DEL_FLAG</if>
+		 ) 
+		 values
+		 (
+		 	#{ID}
+		 	<if test="WS_CD !=null and WS_CD != ''">,#{WS_CD}</if>
+		 	<if test="WS_NM !=null and WS_NM != ''">,#{WS_NM}</if>
+		 	<if test="WS_ADDR !=null and WS_ADDR != ''">,#{WS_ADDR}</if>
+		 	<if test="LENGTH !=null and LENGTH != ''">,#{LENGTH}</if>
+		 	<if test="WIDTH !=null and WIDTH != ''">,#{WIDTH}</if>
+		 	<if test="HEIGHT !=null and HEIGHT != ''">,#{HEIGHT}</if>
+		 	<if test="WS_TYP !=null and WS_TYP != ''">,#{WS_TYP}</if>
+		 	<if test="WS_PRC !=null and WS_PRC != ''">,#{WS_PRC}</if>
+		 	<if test="PAY_TYP !=null and PAY_TYP != ''">,#{PAY_TYP}</if>
+		 	
+		 	<if test="PROVINCE !=null and PROVINCE != ''">,#{PROVINCE}</if>
+		 	<if test="CITY !=null and CITY != ''">,#{CITY}</if>
+		 	<if test="COUNTY !=null and COUNTY != ''">,#{COUNTY}</if>
+		 	<if test="INPUT_DT !=null and INPUT_DT != ''">,#{INPUT_DT}</if>
+		 	<if test="INPUT_CD !=null and INPUT_CD != ''">,#{INPUT_CD}</if>
+		 	<if test="INPUT_NM !=null and INPUT_NM != ''">,#{INPUT_NM}</if>
+		 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,#{MODIFY_DT}</if>
+		 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,#{MODIFY_CD}</if>
+		 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,#{MODIFY_NM}</if>
+		 	<if test="DEL_FLAG !=null and DEL_FLAG != ''">,#{DEL_FLAG}</if>
+		 )
+	</insert>
+	
+	<!-- 通过仓库编号(WS_CD)查询仓库信息 -->
+	<select id="get" parameterType="String" resultType="map">
+		SELECT 
+			ID,WS_CD,WS_NM,WS_ADDR,LENGTH,WIDTH,HEIGHT,WS_TYP,WS_PRC,PAY_TYP,
+			PROVINCE,CITY,COUNTY,INPUT_DT,INPUT_CD,INPUT_NM,MODIFY_DT,MODIFY_CD,MODIFY_NM,DEL_FLAG 
+		FROM WAREHOUSE WHERE WS_CD = #{WS_CD} AND DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+	<!-- 根据仓库编号(WS_CD)进行仓库信息修改 -->
+	<update id="update" parameterType="map">
+		UPDATE WAREHOUSE set id=id
+		<if test="WS_CD !=null and WS_CD != ''">,WS_CD=#{WS_CD}</if>
+	 	<if test="WS_NM !=null and WS_NM != ''">,WS_NM=#{WS_NM}</if>
+	 	<if test="WS_ADDR !=null and WS_ADDR != ''">,WS_ADDR=#{WS_ADDR}</if>
+	 	<if test="LENGTH !=null and LENGTH != ''">,LENGTH=#{LENGTH}</if>
+	 	<if test="WIDTH !=null and WIDTH != ''">,WIDTH=#{WIDTH}</if>
+	 	<if test="HEIGHT !=null and HEIGHT != ''">,HEIGHT=#{HEIGHT}</if>
+	 	<if test="WS_TYP !=null and WS_TYP != ''">,WS_TYP=#{WS_TYP}</if>
+	 	<if test="WS_PRC !=null and WS_PRC != ''">,WS_PRC=#{WS_PRC}</if>
+	 	<if test="PAY_TYP !=null and PAY_TYP != ''">,PAY_TYP=#{PAY_TYP}</if>
+	 	
+	 	<if test="PROVINCE !=null and PROVINCE != ''">,PROVINCE=#{PROVINCE}</if>
+	 	<if test="CITY !=null and CITY != ''">,CITY=#{CITY}</if>
+	 	<if test="COUNTY !=null and COUNTY != ''">,COUNTY=#{COUNTY}</if>
+	 	<if test="MODIFY_DT !=null and MODIFY_DT != ''">,MODIFY_DT=#{MODIFY_DT}</if>
+	 	<if test="MODIFY_CD !=null and MODIFY_CD != ''">,MODIFY_CD=#{MODIFY_CD}</if>
+	 	<if test="MODIFY_NM !=null and MODIFY_NM != ''">,MODIFY_NM=#{MODIFY_NM}</if>
+		WHERE ID = #{ID}
+	</update>
+	
+	<!-- 把删除标识修改为0代表已删除 -->
+	<update id="deleteById" parameterType="map">
+		UPDATE WAREHOUSE SET DEL_FLAG = 0 WHERE ID IN (${ids})
+	</update>
+	
+	<!-- 查询仓库的键值对展示到下拉框 -->
+	<select id="queryWh" resultType="map">
+		SELECT 
+			WS_CD id,WS_NM text
+		FROM WAREHOUSE WHERE DEL_FLAG <![CDATA[<>]]> 0
+	</select>
+	
+</mapper>

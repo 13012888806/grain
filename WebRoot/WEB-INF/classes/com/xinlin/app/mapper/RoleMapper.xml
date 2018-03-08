@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.app.mapper.RoleMapper">
+
+	<!-- 角色实体与数据库表字段映射 -->
+	<resultMap id="role" type="role">
+		<id column="role_id" property="roleId"   />
+		<result column="role_name" property="roleName" />
+		<result column="role_mark" property="roleMark" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+	<!-- 角色与用户对应关系实体与数据库表字段映射 -->
+	<resultMap id="roleUserMap" type="roleUserMap">
+		<result column="user_id" property="userId" />
+		<result column="role_id" property="roleId" />
+	</resultMap>
+
+	<!-- 分页查找所有的角色信息  -->
+	<select id="pageQuery" resultMap="role">
+		SELECT role_id,role_name,role_mark FROM jcdf_role
+			<where>
+				<if test="roleName != null and roleName != ''" >role_name like '%${roleName}%'</if>
+			</where>	
+		order by create_time desc
+	</select>
+	
+	<!-- 新增角色 -->
+	<insert id="insert" parameterType="role">
+		 insert into jcdf_role(role_id,role_name,role_mark,create_time) values(#{roleId},#{roleName},#{roleMark},#{createTime})
+	</insert>
+	
+	<!-- 查询所有的角色信息 -->
+	<select id="list" resultMap="role">
+		 select role_id,role_name FROM jcdf_role order by create_time desc
+	</select>
+	
+	<!-- 通过角色编号(roleId)查询角色信息 -->
+	<select id="get" parameterType="String" resultMap="role">
+	      select role_id,role_name,role_mark FROM jcdf_role where role_id = #{roleId}
+	</select>
+	
+	<!-- 根据角色编号(roleId)进行角色信息修改 -->
+	<update id="update" parameterType="role">
+		UPDATE jcdf_role
+		<set>
+			<if test="roleName != null ">role_name = #{roleName},</if>
+			<if test="roleMark != null ">role_mark = #{roleMark}</if>
+		</set>
+		WHERE role_id = #{roleId}
+	</update>
+	
+	<!-- 根据角色编号(roleId)删除角色 -->
+	<delete id="deleteById" parameterType="string">
+		DELETE FROM jcdf_role WHERE role_id = #{roleId}
+	</delete>
+	
+	<!-- 检查指定的角色是否存在，通过角色名来查找，如果指定了roleId，的检查除此roleId外是否存在指定名称的角色(用户新增修改的角色名唯一校验) -->
+	<select id="checkRoleIsExist" parameterType="role" resultMap="role">
+		select role_id,role_name,role_mark FROM jcdf_role where role_name=#{roleName}
+		<if test="roleId != null "> and role_id != #{roleId}</if>
+	</select>
+	
+	<!-- 新增用户与角色的对应关系信息 -->
+	<insert id="insertRoleUserMap" parameterType="roleUserMap">
+		 insert into jcdf_role_user_map(user_id,role_id) values(#{userId},#{roleId})
+	</insert>
+	
+	<!-- 查询角色所拥有的用户，或者查询用户所拥有的角色 -->
+	<select id="getRoleUserMap" parameterType="roleUserMap" resultType="string">
+	      	<if test="userId != null ">
+	      	 	select role_id FROM jcdf_role_user_map where user_id = #{userId}
+	      	</if>
+			<if test="roleId != null "> 
+				select user_id FROM jcdf_role_user_map where role_id = #{roleId}
+			</if>
+	</select>
+	
+	<!-- 根据指定的条件删除用户与角色的对应关系信息 -->
+	<delete id="deleteRoleUserMap" parameterType="roleUserMap">
+		DELETE FROM jcdf_role_user_map WHERE 1=1
+			<if test="userId != null "> and user_id = #{userId}</if>
+			<if test="roleId != null "> and role_id = #{roleId}</if>
+	</delete>
+</mapper>

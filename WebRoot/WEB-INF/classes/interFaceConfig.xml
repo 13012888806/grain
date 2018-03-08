@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InterFaceContent>
+	<!--每一个请求对应一个vo -->
+	<InterfaceConfigVO>
+		<serviceName>crm</serviceName>
+		<requestUrl>http://crm.service.uat.clt198.com/enterpriseservice.asmx</requestUrl> 
+	</InterfaceConfigVO>
+	<!-- 支付中心的接口：注册，绑定，查询钱包 -->
+	<InterfaceConfigVO>
+		<serviceName>epay</serviceName>
+		<requestUrl>http://epay.uat.itour.com.cn:8888/MemberPortal/services/WebSercices</requestUrl>
+	</InterfaceConfigVO>
+	<!-- 支付中心的接口：代扣支付 -->
+	<InterfaceConfigVO>
+		<serviceName>getIpAddress</serviceName>
+		<requestUrl>http://webservice.webxml.com.cn/WebServices/IpAddressSearchWebService.asmx?wsdl</requestUrl>
+	</InterfaceConfigVO>
+	<InterfaceConfigVO>
+		<serviceName>weatherReport</serviceName>
+		<requestUrl>http://webservice.webxml.com.cn/WebServices/WeatherWS.asmx</requestUrl>
+	</InterfaceConfigVO>
+	<InterfaceConfigVO>
+		<serviceName>order</serviceName>
+		<requestUrl>http://tc.service.uat.clt198.com/OrderHandleService.svc</requestUrl>
+	</InterfaceConfigVO>
+	<InterfaceConfigVO>
+		<serviceName>intentionInfo</serviceName>
+		<requestUrl>http://tc.service.uat.clt198.com/IntentionInfoService.svc</requestUrl>
+	</InterfaceConfigVO>
+	<InterfaceConfigVO>
+		<serviceName>dataBank</serviceName>
+		<requestUrl>http://pc.service.uat.clt198.com/databaceservice.asmx</requestUrl>
+	</InterfaceConfigVO>		
+	<InterfaceConfigVO>
+		<serviceName>netWork</serviceName>
+		<requestUrl>http://ams.service.uat.clt198.com/NetWorkService.svc</requestUrl>
+	</InterfaceConfigVO>		
+	<InterfaceConfigVO>
+		<serviceName>payInfo</serviceName>
+		<requestUrl>http://tc.service.uat.clt198.com/PayInfoService.svc</requestUrl>
+	</InterfaceConfigVO>		
+	<InterfaceConfigVO>
+		<serviceName>controlRule</serviceName>
+		<requestUrl>http://b2g.service.uat.clt198.com/ControlRuleService.svc</requestUrl>
+	</InterfaceConfigVO>		
+	<InterfaceConfigVO>
+		<serviceName>crs</serviceName>
+		<requestUrl>http://crs.service.uat.clt198.com/ItourB2GFlightService.asmx
+        </requestUrl>
+	</InterfaceConfigVO>		
+	<InterfaceConfigVO>
+		<serviceName>msgSev</serviceName>
+		<requestUrl>http://10.124.20.3:8082/ClglCommon/services/msgService</requestUrl>
+	</InterfaceConfigVO>		
+</InterFaceContent>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xinlin.app.mapper.ResourceMapper">
+
+	<!-- 实体与数据库表字段映射 -->
+	<resultMap id="resource" type="resource">
+		<id column="menu_code" property="menuCode" />
+		<id column="res" property="res" />
+		<result column="res_mark" property="resMark" />
+	</resultMap>
+	
+	<!-- 根据指定的菜单编码查询对应的所有资源信息 -->
+	<select id="findByMenuCode" parameterType="string" resultMap="resource">
+		 SELECT menu_code,res,res_mark FROM jcdf_resource
+		 <where>
+		 	<if test="menu_code != null ">menu_code = #{menuCode}</if>
+		 </where>
+		 order by menu_code desc
+	</select>
+
+</mapper>

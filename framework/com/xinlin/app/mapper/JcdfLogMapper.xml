@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinlin.app.mapper.JcdfLogMapper">
+  <resultMap id="BaseResultMap" type="jcdflog">
+    <id column="log_id" jdbcType="VARCHAR" property="logId" />
+    <result column="log_ip" jdbcType="VARCHAR" property="logIp" />
+    <result column="log_mac" jdbcType="VARCHAR" property="logMac" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="operator_time" jdbcType="TIMESTAMP" property="operatorTime" />
+    <result column="operato_content" jdbcType="VARCHAR" property="operatoContent" />
+    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="log_para1" jdbcType="INTEGER" property="logPara1" />
+    <result column="log_para2" jdbcType="INTEGER" property="logPara2" />
+    <result column="log_para3" jdbcType="VARCHAR" property="logPara3" />
+    <result column="log_para4" jdbcType="VARCHAR" property="logPara4" />
+  </resultMap>
+  
+  <!-- 分页查询菜单下面的按钮资源数据  -->
+	<select id="pageQuery" parameterType="jcdflog" resultMap="BaseResultMap">
+		  select  log_id, log_ip, log_mac, user_id, user_name, operator_time, operato_content,
+        module_name, log_para1, log_para2, log_para3, log_para4 
+        from jcdf_log  where 1=1  
+			<if test="userId != null and userId != ''"> and user_id = #{userId}</if>
+			<if test="userName != null and userName !=''"> and user_name = #{userName}</if>
+			<if test="moduleName != null and moduleName != ''"> and module_name = #{moduleName}</if>
+			<if test="operatoContent != null and operatoContent !='' "> and operato_content = #{operatoContent}</if>
+		order by operator_time desc
+	</select>
+  
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+   
+  <sql id="Base_Column_List">
+    log_id, log_ip, log_mac, user_id, user_name, operator_time, operato_content, module_name, 
+    log_para1, log_para2, log_para3, log_para4
+  </sql>
+  
+  
+  <insert id="insertSelective" parameterType="jcdflog">
+    insert into jcdf_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="logId != null">
+        log_id,
+      </if>
+      <if test="logIp != null">
+        log_ip,
+      </if>
+      <if test="logMac != null">
+        log_mac,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="operatorTime != null">
+        operator_time,
+      </if>
+      <if test="operatoContent != null">
+        operato_content,
+      </if>
+      <if test="moduleName != null">
+        module_name,
+      </if>
+      <if test="logPara1 != null">
+        log_para1,
+      </if>
+      <if test="logPara2 != null">
+        log_para2,
+      </if>
+      <if test="logPara3 != null">
+        log_para3,
+      </if>
+      <if test="logPara4 != null">
+        log_para4,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="logId != null">
+        #{logId,jdbcType=VARCHAR},
+      </if>
+      <if test="logIp != null">
+        #{logIp,jdbcType=VARCHAR},
+      </if>
+      <if test="logMac != null">
+        #{logMac,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorTime != null">
+        #{operatorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatoContent != null">
+        #{operatoContent,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleName != null">
+        #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="logPara1 != null">
+        #{logPara1,jdbcType=INTEGER},
+      </if>
+      <if test="logPara2 != null">
+        #{logPara2,jdbcType=INTEGER},
+      </if>
+      <if test="logPara3 != null">
+        #{logPara3,jdbcType=VARCHAR},
+      </if>
+      <if test="logPara4 != null">
+        #{logPara4,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+ 
+   
+  <update id="updateByExample" parameterType="map">
+    update jcdf_log
+    set log_id = #{record.logId,jdbcType=VARCHAR},
+      log_ip = #{record.logIp,jdbcType=VARCHAR},
+      log_mac = #{record.logMac,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      operator_time = #{record.operatorTime,jdbcType=TIMESTAMP},
+      operato_content = #{record.operatoContent,jdbcType=VARCHAR},
+      module_name = #{record.moduleName,jdbcType=VARCHAR},
+      log_para1 = #{record.logPara1,jdbcType=INTEGER},
+      log_para2 = #{record.logPara2,jdbcType=INTEGER},
+      log_para3 = #{record.logPara3,jdbcType=VARCHAR},
+      log_para4 = #{record.logPara4,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="jcdflog">
+    update jcdf_log
+    <set>
+      <if test="logIp != null">
+        log_ip = #{logIp,jdbcType=VARCHAR},
+      </if>
+      <if test="logMac != null">
+        log_mac = #{logMac,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorTime != null">
+        operator_time = #{operatorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatoContent != null">
+        operato_content = #{operatoContent,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleName != null">
+        module_name = #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="logPara1 != null">
+        log_para1 = #{logPara1,jdbcType=INTEGER},
+      </if>
+      <if test="logPara2 != null">
+        log_para2 = #{logPara2,jdbcType=INTEGER},
+      </if>
+      <if test="logPara3 != null">
+        log_para3 = #{logPara3,jdbcType=VARCHAR},
+      </if>
+      <if test="logPara4 != null">
+        log_para4 = #{logPara4,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where log_id = #{logId,jdbcType=VARCHAR}
+  </update>
+  
+  
+</mapper>
